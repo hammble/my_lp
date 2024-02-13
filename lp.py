@@ -17,7 +17,7 @@ import pyowm
 import random
 from pyowm import OWM
 
-owm = pyowm.OWM('33c10148f85a62b21348b41fe347989a')
+owm = pyowm.OWM('ТОКЕН open weather api')
 mgr = owm.weather_manager()
 api = API('СЮДА ТОКЕН')
 token = 'СЮДА ТОКЕН'
