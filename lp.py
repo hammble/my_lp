@@ -547,6 +547,8 @@ async def remove_timer(message: Message, timer_id: int):
 
 @user.on.message(text=[f'{prefix} +дов' for prefix in prefixes])
 async def povtoryalka(message: Message):
+    if message.from_id not in owners:
+        return
     user_id = await user_id_get_mes(message)
     a = await message.get_user(user_ids=user_id)
     name = f'[id{a.id}|{a.first_name} {a.last_name}]'
@@ -558,17 +560,21 @@ async def povtoryalka(message: Message):
 
 @user.on.message(text=[f'{prefix} +дов <link>' for prefix in prefixes])
 async def povtoryalka(message: Message, link: str):
-  user_id = get_user_id(link)[0]
-  a = await message.get_user(user_ids=user_id)
-  name = f'[id{a.id}|{a.first_name} {a.last_name}]'
-  if user_id in dov:
-    await edit_message(message, f'❌ {name} уже был добавлен в список доверенных!')
-  else:
-    dov.append(user_id)
-    await edit_message(message, f'✅ {name} добавлен в список доверенных!')
+    if message.from_id not in owners:
+        return
+    user_id = get_user_id(link)[0]
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    if user_id in dov:
+        await edit_message(message, f'❌ {name} уже был добавлен в список доверенных!')
+    else:
+        dov.append(user_id)
+        await edit_message(message, f'✅ {name} добавлен в список доверенных!')
 
 @user.on.message(text=[f'{prefix} -дов' for prefix in prefixes])
 async def povtoryalka(message: Message):
+    if message.from_id not in owners:
+        return
     user_id = await user_id_get_mes(message)
     a = await message.get_user(user_ids=user_id)
     name = f'[id{a.id}|{a.first_name} {a.last_name}]'
@@ -580,6 +586,8 @@ async def povtoryalka(message: Message):
 
 @user.on.message(text=[f'{prefix} -дов <link>' for prefix in prefixes])
 async def povtoryalka(message: Message, link: str):
+    if message.from_id not in owners:
+        return
     user_id = get_user_id(link)[0]
     a = await message.get_user(user_ids=user_id)
     name = f'[id{a.id}|{a.first_name} {a.last_name}]'
@@ -591,6 +599,8 @@ async def povtoryalka(message: Message, link: str):
 
 @user.on.message(text=[f'{prefix} довы' for prefix in prefixes])
 async def dovsspisok(message: Message):
+    if message.from_id not in owners:
+        return
     if not dov:
         await edit_message(message, '❌ Нет доверенных пользователей!')
     else:
@@ -603,6 +613,8 @@ async def dovsspisok(message: Message):
 
 @user.on.message(text=[f'{prefix} игноры' for prefix in prefixes])
 async def show_ignored_users(message: Message):
+    if message.from_id not in owners:
+        return
     ignored_info = []
     for target_id, ignored in ignored_users.items():
         for user_id in ignored:
@@ -624,6 +636,8 @@ async def dovtext(message: Message, text: str):
 
 @user.on.message(text=[f'{prefix} инфо' for prefix in prefixes])
 async def infolp(message: Message):
+    if message.from_id not in owners:
+        return
     user_id = message.from_id
     a = await message.get_user(user_ids=user_id)
     name = f'[id{a.id}|{a.first_name} {a.last_name}]'
