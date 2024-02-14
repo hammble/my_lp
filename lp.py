@@ -382,22 +382,28 @@ async def greeting(message: Message, url: str):
     await message.ctx_api.account.unban(user_id)
     await edit_message(message, f'✅ {name} удален из ЧС')
 
-
-@user.on.message(text=[f'{prefix} влс' for prefix in prefixes])
+@user.on.message(text=[f'{prefix} влс\n<text>' for prefix in prefixes])
 async def greeting(message: Message, text: str):
+    if message.from_id not in owners:
+        print('')
+        return
     user_id = await user_id_get_mes(message)
     print(user_id)
     await message.ctx_api.request("messages.send", {"peer_id": user_id, "message": text, "random_id": 0})
     tt = '✅ Сообщение отправлено.'
     await edit_message(message, tt)
 
-@user.on.message(text=[f'{prefix} влс <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix} влс <url>\n<text>' for prefix in prefixes])
 async def greeting(message: Message, url: str, text: str):
+    if message.from_id not in owners:
+        print('')
+        return
     user_id = get_user_id(url)[0]
     print(user_id)
     await message.ctx_api.request("messages.send", {"peer_id": user_id, "message": text, "random_id": 0})
     tt = '✅ Сообщение отправлено.'
     await edit_message(message, tt)
+
 
 @user.on.message(text=[f'{prefix} +шаб <name>\n<text>' for prefix in prefixes])
 async def add_template(message: Message, name: str, text: str):
