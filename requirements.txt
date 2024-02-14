@@ -1,0 +1,4 @@
+vkbottle==4.3.12
+aiothhp
+vk_api
+beautifulsoup4
