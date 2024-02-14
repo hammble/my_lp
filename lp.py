@@ -115,57 +115,73 @@ async def user_id_get_mes(message: Message):
 
 @user.on.message(text=[f'{prefix} пинг' for prefix in prefixes])
 async def ping(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
     delta = round(time.time() - message.date, 2)
     text = f'✅ Я мяукнул за {delta} секундачек!'
     await edit_message(message, text)
 
 @user.on.message(text=[f'{prefix} +др' for prefix in prefixes])
 async def greeting(message: Message):
-  user_id = await user_id_get_mes(message=message)
-  if user_id == message.from_id:
-    await edit_message(message, "❌ Не добавляйте себя в друзья!")
-    return
-  await message.ctx_api.friends.add(user_id)
-  a = await message.get_user(user_ids=user_id)
-  name = f'[id{a.id}|{a.first_name} {a.last_name}]'
-  text = f'✅ {name} добавлен в друзья.'
-  await edit_message(message, text)
+    if message.from_id not in owners:
+        print('')
+        return
+    user_id = await user_id_get_mes(message=message)
+    if user_id == message.from_id:
+        await edit_message(message, "❌ Не добавляйте себя в друзья!")
+        return
+    await message.ctx_api.friends.add(user_id)
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    text = f'✅ {name} добавлен в друзья.'
+    await edit_message(message, text)
 
 @user.on.message(text=[f'{prefix} +др <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
-  user_id = get_user_id(url)[0]
-  if user_id == message.from_id:
-    await edit_message(message, "❌ Не добавляйте себя в друзья!")
-    return
-  await message.ctx_api.friends.add(user_id)
-  a = await message.get_user(user_ids=user_id)
-  name = f'[id{a.id}|{a.first_name} {a.last_name}]'
-  text = f'✅ {name} добавлен в друзья.'
-  await edit_message(message, text)
+    if message.from_id not in owners:
+        print('')
+        return
+    user_id = get_user_id(url)[0]
+    if user_id == message.from_id:
+        await edit_message(message, "❌ Не добавляйте себя в друзья!")
+        return
+    await message.ctx_api.friends.add(user_id)
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    text = f'✅ {name} добавлен в друзья.'
+    await edit_message(message, text)
 
 @user.on.message(text=[f'{prefix} -др' for prefix in prefixes])
 async def greeting(message: Message):
-  user_id = await user_id_get_mes(message=message)
-  if user_id == message.from_id:
-    await edit_message(message, "❌ Не удаляйте себя из друзей!")
-    return
-  await message.ctx_api.friends.delete(user_id)
-  a = await message.get_user(user_ids=user_id)
-  name = f'[id{a.id}|{a.first_name} {a.last_name}]'
-  text = f'✅ {name} удалён из друзей.'
-  await edit_message(message, text)
+    if message.from_id not in owners:
+        print('')
+        return
+    user_id = await user_id_get_mes(message=message)
+    if user_id == message.from_id:
+        await edit_message(message, "❌ Не удаляйте себя из друзей!")
+        return
+    await message.ctx_api.friends.delete(user_id)
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    text = f'✅ {name} удалён из друзей.'
+    await edit_message(message, text)
 
 @user.on.message(text=[f'{prefix} -др <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
-  user_id = get_user_id(url)[0]
-  if user_id == message.from_id:
-    await edit_message(message, "❌ Не удаляйте себя из друзей!")
-    return
-  await message.ctx_api.friends.delete(user_id)
-  a = await message.get_user(user_ids=user_id)
-  name = f'[id{a.id}|{a.first_name} {a.last_name}]'
-  text = f'✅ {name} удалён из друзей.'
-  await edit_message(message, text)
+    if message.from_id not in owners:
+        print('')
+        return
+    user_id = get_user_id(url)[0]
+    if user_id == message.from_id:
+        await edit_message(message, "❌ Не удаляйте себя из друзей!")
+        return
+    await message.ctx_api.friends.delete(user_id)
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    text = f'✅ {name} удалён из друзей.'
+    await edit_message(message, text)
+
 
 @user.on.message(text=[f'{prefix} добавить' for prefix in prefixes])
 async def greeting(message: Message):
