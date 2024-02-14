@@ -252,58 +252,70 @@ async def greeting(message: Message, url: str):
 
 @user.on.message(text=[f'{prefix} -админ' for prefix in prefixes])
 async def greeting(message: Message):
-    try:
-      user_id = await user_id_get_mes(message)
-      if user_id == message.from_id:
-        await edit_message(message, "❌ Не удаляйте себя из админов!")
+    if message.from_id not in owners:
+        print('')
         return
-      await message.ctx_api.request("messages.setMemberRole",
+    try:
+        user_id = await user_id_get_mes(message)
+        if user_id == message.from_id:
+            await edit_message(message, "❌ Не удаляйте себя из админов!")
+            return
+        await message.ctx_api.request("messages.setMemberRole",
                                       {"peer_id": message.peer_id, "member_id": user_id, "role": "member"})
-      text = f"✅ С [id{user_id}|Права администратора сняты.]"
-      await edit_message(message, text)
+        text = f"✅ С [id{user_id}|Права администратора сняты.]"
+        await edit_message(message, text)
     except Exception as ex:
-      await edit_message(message, f"Ошибка: {ex}")
+        await edit_message(message, f"Ошибка: {ex}")
 
 @user.on.message(text=[f'{prefix} -админ <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
-    try:
-      user_id = get_user_id(url)[0]
-      if user_id == message.from_id:
-        await edit_message(message, "❌ Не удаляйте себя из админов!")
+    if message.from_id not in owners:
+        print('')
         return
-      await message.ctx_api.request("messages.setMemberRole",
+    try:
+        user_id = get_user_id(url)[0]
+        if user_id == message.from_id:
+            await edit_message(message, "❌ Не удаляйте себя из админов!")
+            return
+        await message.ctx_api.request("messages.setMemberRole",
                                       {"peer_id": message.peer_id, "member_id": user_id, "role": "member"})
-      text = f"✅ С [id{user_id}|Права администратора сняты.]"
-      await edit_message(message, text)
+        text = f"✅ С [id{user_id}|Права администратора сняты.]"
+        await edit_message(message, text)
     except Exception as ex:
-      await edit_message(message, f"Ошибка: {ex}")
+        await edit_message(message, f"Ошибка: {ex}")
 
 @user.on.message(text=[f'{prefix} кик' for prefix in prefixes])
 async def greeting(message: Message):
-    try:
-      user_id = await user_id_get_mes(message)
-      if user_id == message.from_id:
-        await edit_message(message, "❌ Не кикайте себя!")
+    if message.from_id not in owners:
+        print('')
         return
-      await message.ctx_api.request("messages.removeChatUser", {"member_id": user_id,
+    try:
+        user_id = await user_id_get_mes(message)
+        if user_id == message.from_id:
+            await edit_message(message, "❌ Не кикайте себя!")
+            return
+        await message.ctx_api.request("messages.removeChatUser", {"member_id": user_id,
                                                                   "chat_id": message.peer_id - 2000000000})
-      text = f"✅ Исключен с беседы."
-      await edit_message(message, text)
+        text = f"✅ Исключен с беседы."
+        await edit_message(message, text)
     except Exception as ex:
-      await edit_message(message, f'Ошибка: {ex}')
+        await edit_message(message, f'Ошибка: {ex}')
 
 @user.on.message(text=[f'{prefix} кик <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
-    try:
-      user_id = get_user_id(url)[0]
-      if user_id == message.from_id:
-        await edit_message(message, "❌ Не кикайте себя!")
+    if message.from_id not in owners:
+        print('')
         return
-      await message.ctx_api.request("messages.removeChatUser", {"member_id": user_id,"chat_id": message.peer_id - 2000000000})
-      text = f"✅ Исключен с беседы."
-      await edit_message(message, text)
+    try:
+        user_id = get_user_id(url)[0]
+        if user_id == message.from_id:
+            await edit_message(message, "❌ Не кикайте себя!")
+            return
+        await message.ctx_api.request("messages.removeChatUser", {"member_id": user_id,"chat_id": message.peer_id - 2000000000})
+        text = f"✅ Исключен с беседы."
+        await edit_message(message, text)
     except Exception as ex:
-      await edit_message(message, f'Ошибка: {ex}')
+        await edit_message(message, f'Ошибка: {ex}')
 
 @user.on.message(text=[f'{prefix} выйти' for prefix in prefixes])
 async def greeting(message: Message):
