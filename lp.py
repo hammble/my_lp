@@ -666,6 +666,8 @@ async def infolp(message: Message):
 
 @user.on.message(text=[f'{prefix} +игнор' for prefix in prefixes])
 async def add_ignored_user(message: Message):
+    if message.from_id not in owners:
+        return
     user_id = await user_id_get_mes(message)
     a = await message.get_user(user_ids=user_id)
     name = f'[id{a.id}|{a.first_name} {a.last_name}]'
@@ -683,6 +685,8 @@ async def add_ignored_user(message: Message):
 
 @user.on.message(text=[f'{prefix} +игнор <link>' for prefix in prefixes])
 async def add_ignored_user(message: Message, link: str):
+    if message.from_id not in owners:
+        return
     user_id = get_user_id(link)[0]
     a = await message.get_user(user_ids=user_id)
     name = f'[id{a.id}|{a.first_name} {a.last_name}]'
@@ -700,6 +704,8 @@ async def add_ignored_user(message: Message, link: str):
 
 @user.on.message(text=[f'{prefix} -игнор' for prefix in prefixes])
 async def remove_ignored_user(message: Message):
+    if message.from_id not in owners:
+        return
     user_id = await user_id_get_mes(message)
     a = await message.get_user(user_ids=user_id)
     name = f'[id{a.id}|{a.first_name} {a.last_name}]'
@@ -715,6 +721,8 @@ async def remove_ignored_user(message: Message):
 
 @user.on.message(text=[f'{prefix} -игнор <link>' for prefix in prefixes])
 async def remove_ignored_user(message: Message, link: str):
+    if message.from_id not in owners:
+        return
     user_id = get_user_id(link)[0]
     a = await message.get_user(user_ids=user_id)
     name = f'[id{a.id}|{a.first_name} {a.last_name}]'
@@ -730,10 +738,10 @@ async def remove_ignored_user(message: Message, link: str):
 
 @user.on.message(text=['дд', 'Дд <count:int>', 'Дд', 'дд <count:int>'])
 async def greeting(message: Message, count: int = 2):
+    if message.from_id not in owners:
+        return
     ct = count + 1
     await message.ctx_api.execute(DD_SCRIPT % (ct,message.peer_id,message.from_id,int(datetime.datetime.now().timestamp())))
-
-
 
 @user.on.message() 
 async def delete_ignored_messages(message: Message):
