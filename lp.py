@@ -407,45 +407,58 @@ async def greeting(message: Message, url: str, text: str):
 
 @user.on.message(text=[f'{prefix} +шаб <name>\n<text>' for prefix in prefixes])
 async def add_template(message: Message, name: str, text: str):
-    with open(TEMPLATES_FILE, 'r') as f:
-        templates = json.load(f)
-    templates[name] = text
-    with open(TEMPLATES_FILE, 'w') as f:
-        json.dump(templates, f)
-    await edit_message(message=message, text=f"✅ Шаблон «{name}» создан.")
+    if message.from_id not in owners:
+        return
+    else:
+        with open(TEMPLATES_FILE, 'r') as f:
+            templates = json.load(f)
+        templates[name] = text
+        with open(TEMPLATES_FILE, 'w') as f:
+            json.dump(templates, f)
+        await edit_message(message=message, text=f"✅ Шаблон «{name}» создан.")
 
 @user.on.message(text=[f'{prefix} -шаб <name>' for prefix in prefixes])
 async def delete_template(message: Message, name: str):
-    with open(TEMPLATES_FILE, 'r') as f:
-        templates = json.load(f)
-    if name in templates:
-        del templates[name]
-        with open(TEMPLATES_FILE, 'w') as f:
-            json.dump(templates, f)
-        await edit_message(message=message, text=f"✅ Шаблон «{name}» удален.")
+    if message.from_id not in owners:
+        return
     else:
-        await edit_message(message=message, text=f"🚫 Шаблон «{name}» не найден.")
+        with open(TEMPLATES_FILE, 'r') as f:
+            templates = json.load(f)
+        if name in templates:
+            del templates[name]
+            with open(TEMPLATES_FILE, 'w') as f:
+                json.dump(templates, f)
+            await edit_message(message=message, text=f"✅ Шаблон «{name}» удален.")
+        else:
+            await edit_message(message=message, text=f"🚫 Шаблон «{name}» не найден.")
 
 @user.on.message(text=[f'{prefix} шабы' for prefix in prefixes])
 async def list_templates(message: Message):
-    with open(TEMPLATES_FILE, 'r') as f:
-        template_names = json.load(f, object_pairs_hook=OrderedDict)
-    if template_names:
-        template_list = "\n".join(f"{i+1}. {name}" for i, name in enumerate(template_names))
-        await edit_message(message=message, text=f"📖 Список шаблонов:\n{template_list}")
+    if message.from_id not in owners:
+        return
     else:
-        await edit_message(message=message, text="📖 Список шаблонов пуст.")
+        with open(TEMPLATES_FILE, 'r') as f:
+            template_names = json.load(f, object_pairs_hook=OrderedDict)
+        if template_names:
+            template_list = "\n".join(f"{i+1}. {name}" for i, name in enumerate(template_names))
+            await edit_message(message=message, text=f"📖 Список шаблонов:\n{template_list}")
+        else:
+            await edit_message(message=message, text="📖 Список шаблонов пуст.")
 
 @user.on.message(text=[f'{prefix} шаб <name>' for prefix in prefixes])
 async def use_template(message: Message, name: str):
-    with open(TEMPLATES_FILE, 'r') as f:
-        templates = json.load(f)
-
-    if name in templates:
-        template_text = templates[name]
-        await edit_message(message=message, text=f"{template_text}")
+    if message.from_id not in owners:
+        return
     else:
-        await edit_message(message=message, text=f"🚫 Шаблон «{name}» не найден.")
+        with open(TEMPLATES_FILE, 'r') as f:
+            templates = json.load(f)
+
+        if name in templates:
+            template_text = templates[name]
+            await edit_message(message=message, text=f"{template_text}")
+        else:
+            await edit_message(message=message, text=f"🚫 Шаблон «{name}» не найден.")
+
 
 @user.on.message(text=[f'{prefix} погода <city>' for prefix in prefixes])
 async def weather_info(message: Message, city: str):
