@@ -459,9 +459,10 @@ async def use_template(message: Message, name: str):
         else:
             await edit_message(message=message, text=f"🚫 Шаблон «{name}» не найден.")
 
-
 @user.on.message(text=[f'{prefix} погода <city>' for prefix in prefixes])
 async def weather_info(message: Message, city: str):
+    if message.from_id not in owners:
+        return
     observation = mgr.weather_at_place(city)
     w = observation.weather
     temperature = w.temperature('celsius')["temp"]
@@ -481,15 +482,19 @@ async def weather_info(message: Message, city: str):
 
 @user.on.message(text=[f'{prefix} реши <equation>' for prefix in prefixes])
 async def solve_equation(message: Message, equation: str):
+    if message.from_id not in owners:
+        return
     try:
         result = eval(equation)
         await edit_message(message, text=f"📝 Результат: {result}")
     except Exception as e:
         error_message = f"⚠ Произошла неизвестная ошибка."
-        await edit_message(message,error_message)
+        await edit_message(message, error_message)
 
 @user.on.message(text=[f'{prefix} +таймер <minutes:int>\n<text>' for prefix in prefixes])
 async def set_timer(message: Message, minutes: int, text: str):
+    if message.from_id not in owners:
+        return
     try:
         global timer_counter
         response = "⌚ Таймер установлен!"
@@ -525,6 +530,8 @@ async def list_timers(message: Message):
 
 @user.on.message(text=[f'{prefix} -таймер <timer_id:int>' for prefix in prefixes])
 async def remove_timer(message: Message, timer_id: int):
+    if message.from_id not in owners:
+        return
     global timers, timer_counter
     if timer_id in timers:
         timers.pop(timer_id)
@@ -536,6 +543,7 @@ async def remove_timer(message: Message, timer_id: int):
             timers[idx - 1] = timers.pop(idx)
     if not timers:
         timer_counter = 0
+
 
 @user.on.message(text=[f'{prefix} +дов' for prefix in prefixes])
 async def povtoryalka(message: Message):
