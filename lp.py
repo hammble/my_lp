@@ -19,20 +19,19 @@ from pyowm import OWM
 
 owm = pyowm.OWM('ТОКЕН open weather api')
 mgr = owm.weather_manager()
-api = API('СЮДА ТОКЕН')
-token = 'СЮДА ТОКЕН'
-user = User('СЮДА ТОКЕН')
-bot = Bot('СЮДА ТОКЕН')
+api = API('ТОКЕН')
+token = 'ТОКЕН'
+user = User('ТОКЕН')
+bot = Bot('ТОКЕН')
 TEMPLATES_FILE = 'temps.json'
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 timers = {}
 ignored_users = {}
 timer_counter = 0
-owners = []
+owners = [] # YOUR USER ID
 dov = []
-prefixes = ['Нд', 'нд']
-
+prefixes = [''] # PREFIXES
 
 status_translation = {
     'clear sky': 'ясное небо',
@@ -113,16 +112,32 @@ async def user_id_get_mes(message: Message):
         vk_user = message.reply_message.from_id
     return vk_user
 
-@user.on.message(text=[f'{prefix} пинг' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}ид' for prefix in prefixes])
+async def getid(message: Message):
+  user_id = await user_id_get_mes(message)
+  if message.from_id not in owners:
+    print('')
+    return
+  await edit_message(message, f'ID [id{user_id}|Пользователя]: {user_id}')
+
+@user.on.message(text=[f'{prefix}ид <link>' for prefix in prefixes])
+async def ejdj(message: Message, link: str):
+  user_id = get_user_id(link)[0]
+  if message.from_id not in owners:
+    print('')
+    return
+  await edit_message(message, f'ID [id{user_id}|Пользователя]: {user_id}')
+
+@user.on.message(text=[f'{prefix}пинг' for prefix in prefixes])
 async def ping(message: Message):
     if message.from_id not in owners:
         print('')
         return
     delta = round(time.time() - message.date, 2)
-    text = f'✅ Я мяукнул за {delta} секундачек!'
+    text = f'🏓 Понг! Задержка: {delta}с.'
     await edit_message(message, text)
 
-@user.on.message(text=[f'{prefix} +др' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+др' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -137,7 +152,7 @@ async def greeting(message: Message):
     text = f'✅ {name} добавлен в друзья.'
     await edit_message(message, text)
 
-@user.on.message(text=[f'{prefix} +др <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+др <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
     if message.from_id not in owners:
         print('')
@@ -152,7 +167,7 @@ async def greeting(message: Message, url: str):
     text = f'✅ {name} добавлен в друзья.'
     await edit_message(message, text)
 
-@user.on.message(text=[f'{prefix} -др' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-др' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -167,7 +182,7 @@ async def greeting(message: Message):
     text = f'✅ {name} удалён из друзей.'
     await edit_message(message, text)
 
-@user.on.message(text=[f'{prefix} -др <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-др <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
     if message.from_id not in owners:
         print('')
@@ -182,8 +197,7 @@ async def greeting(message: Message, url: str):
     text = f'✅ {name} удалён из друзей.'
     await edit_message(message, text)
 
-
-@user.on.message(text=[f'{prefix} добавить' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}добавить' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -199,7 +213,7 @@ async def greeting(message: Message):
     except Exception as ex:
         await edit_message(message, f"Ошибка: {ex}")
 
-@user.on.message(text=[f'{prefix} добавить <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}добавить <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
     if message.from_id not in owners:
         print('')
@@ -215,7 +229,7 @@ async def greeting(message: Message, url: str):
     except Exception as ex:
         await edit_message(message, f"Ошибка: {ex}")
 
-@user.on.message(text=[f'{prefix} +админ' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+админ' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -232,7 +246,7 @@ async def greeting(message: Message):
     except Exception as ex:
         await edit_message(message, f'Ошибка: {ex}')
 
-@user.on.message(text=[f'{prefix} +админ <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+админ <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
     if message.from_id not in owners:
         print('')
@@ -249,8 +263,7 @@ async def greeting(message: Message, url: str):
     except Exception as ex:
         await edit_message(message, f'Ошибка: {ex}')
 
-
-@user.on.message(text=[f'{prefix} -админ' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-админ' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -267,7 +280,7 @@ async def greeting(message: Message):
     except Exception as ex:
         await edit_message(message, f"Ошибка: {ex}")
 
-@user.on.message(text=[f'{prefix} -админ <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-админ <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
     if message.from_id not in owners:
         print('')
@@ -284,7 +297,7 @@ async def greeting(message: Message, url: str):
     except Exception as ex:
         await edit_message(message, f"Ошибка: {ex}")
 
-@user.on.message(text=[f'{prefix} кик' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}кик' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -301,7 +314,7 @@ async def greeting(message: Message):
     except Exception as ex:
         await edit_message(message, f'Ошибка: {ex}')
 
-@user.on.message(text=[f'{prefix} кик <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}кик <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
     if message.from_id not in owners:
         print('')
@@ -317,7 +330,7 @@ async def greeting(message: Message, url: str):
     except Exception as ex:
         await edit_message(message, f'Ошибка: {ex}')
 
-@user.on.message(text=[f'{prefix} выйти' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}выйти' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -326,7 +339,7 @@ async def greeting(message: Message):
     await edit_message(message, text)
     await message.ctx_api.request("messages.removeChatUser", {"member_id": message.from_id,"chat_id": message.peer_id - 2000000000})
 
-@user.on.message(text=[f'{prefix} +чс' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+чс' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -340,7 +353,7 @@ async def greeting(message: Message):
     await message.ctx_api.account.ban(user_id)
     await edit_message(message, f'✅ {name} добавлен в ЧС')
 
-@user.on.message(text=[f'{prefix} +чс <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+чс <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
     if message.from_id not in owners:
         print('')
@@ -354,7 +367,7 @@ async def greeting(message: Message, url: str):
     await message.ctx_api.account.ban(user_id)
     await edit_message(message, f'✅ {name} добавлен в ЧС')
 
-@user.on.message(text=[f'{prefix} -чс' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-чс' for prefix in prefixes])
 async def greeting(message: Message):
     if message.from_id not in owners:
         print('')
@@ -368,7 +381,7 @@ async def greeting(message: Message):
     await message.ctx_api.account.unban(user_id)
     await edit_message(message, f'✅ {name} удален из ЧС')
 
-@user.on.message(text=[f'{prefix} -чс <url>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-чс <url>' for prefix in prefixes])
 async def greeting(message: Message, url: str):
     if message.from_id not in owners:
         print('')
@@ -382,7 +395,7 @@ async def greeting(message: Message, url: str):
     await message.ctx_api.account.unban(user_id)
     await edit_message(message, f'✅ {name} удален из ЧС')
 
-@user.on.message(text=[f'{prefix} влс\n<text>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}влс\n<text>' for prefix in prefixes])
 async def greeting(message: Message, text: str):
     if message.from_id not in owners:
         print('')
@@ -393,7 +406,7 @@ async def greeting(message: Message, text: str):
     tt = '✅ Сообщение отправлено.'
     await edit_message(message, tt)
 
-@user.on.message(text=[f'{prefix} влс <url>\n<text>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}влс <url>\n<text>' for prefix in prefixes])
 async def greeting(message: Message, url: str, text: str):
     if message.from_id not in owners:
         print('')
@@ -404,8 +417,7 @@ async def greeting(message: Message, url: str, text: str):
     tt = '✅ Сообщение отправлено.'
     await edit_message(message, tt)
 
-
-@user.on.message(text=[f'{prefix} +шаб <name>\n<text>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+шаб <name>\n<text>' for prefix in prefixes])
 async def add_template(message: Message, name: str, text: str):
     if message.from_id not in owners:
         return
@@ -417,7 +429,7 @@ async def add_template(message: Message, name: str, text: str):
             json.dump(templates, f)
         await edit_message(message=message, text=f"✅ Шаблон «{name}» создан.")
 
-@user.on.message(text=[f'{prefix} -шаб <name>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-шаб <name>' for prefix in prefixes])
 async def delete_template(message: Message, name: str):
     if message.from_id not in owners:
         return
@@ -430,9 +442,24 @@ async def delete_template(message: Message, name: str):
                 json.dump(templates, f)
             await edit_message(message=message, text=f"✅ Шаблон «{name}» удален.")
         else:
-            await edit_message(message=message, text=f"🚫 Шаблон «{name}» не найден.")
+            await edit_message(message=message, text=f"❌ Шаблон «{name}» не найден.")
 
-@user.on.message(text=[f'{prefix} шабы' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}~шаб <name>\n<new_text>' for prefix in prefixes])
+async def edit_template(message: Message, name: str, new_text: str):
+    if message.from_id not in owners:
+        return
+    else:
+        with open(TEMPLATES_FILE, 'r') as f:
+            templates = json.load(f)
+        if name in templates:
+            templates[name] = new_text
+            with open(TEMPLATES_FILE, 'w') as f:
+                json.dump(templates, f)
+            await edit_message(message=message, text=f"✅ Текст шаблона «{name}» изменен.")
+        else:
+            await edit_message(message=message, text=f"❌ Шаблон «{name}» не найден.")
+
+@user.on.message(text=[f'{prefix}шабы' for prefix in prefixes])
 async def list_templates(message: Message):
     if message.from_id not in owners:
         return
@@ -445,7 +472,7 @@ async def list_templates(message: Message):
         else:
             await edit_message(message=message, text="📖 Список шаблонов пуст.")
 
-@user.on.message(text=[f'{prefix} шаб <name>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}шаб <name>' for prefix in prefixes])
 async def use_template(message: Message, name: str):
     if message.from_id not in owners:
         return
@@ -457,9 +484,9 @@ async def use_template(message: Message, name: str):
             template_text = templates[name]
             await edit_message(message=message, text=f"{template_text}")
         else:
-            await edit_message(message=message, text=f"🚫 Шаблон «{name}» не найден.")
+            await edit_message(message=message, text=f"❌ Шаблон «{name}» не найден.")
 
-@user.on.message(text=[f'{prefix} погода <city>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}погода <city>' for prefix in prefixes])
 async def weather_info(message: Message, city: str):
     if message.from_id not in owners:
         return
@@ -480,7 +507,7 @@ async def weather_info(message: Message, city: str):
     )
     await edit_message(message, response)
 
-@user.on.message(text=[f'{prefix} реши <equation>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}реши <equation>' for prefix in prefixes])
 async def solve_equation(message: Message, equation: str):
     if message.from_id not in owners:
         return
@@ -491,7 +518,7 @@ async def solve_equation(message: Message, equation: str):
         error_message = f"⚠ Произошла неизвестная ошибка."
         await edit_message(message, error_message)
 
-@user.on.message(text=[f'{prefix} +таймер <minutes:int>\n<text>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+таймер <minutes:int>\n<text>' for prefix in prefixes])
 async def set_timer(message: Message, minutes: int, text: str):
     if message.from_id not in owners:
         return
@@ -518,7 +545,7 @@ async def set_timer(message: Message, minutes: int, text: str):
     except Exception as e:
         print(f"Ошибка при установке таймера: {e}")
 
-@user.on.message(text=[f'{prefix} таймеры' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}таймеры' for prefix in prefixes])
 async def list_timers(message: Message):
     if not timers:
         await edit_message(message, text="⌚ Нет активных таймеров.")
@@ -528,7 +555,7 @@ async def list_timers(message: Message):
         response += f"{timer_id}. {timer_info['text']} -> {timer_info['minutes']} минуток\n"
     await edit_message(message, response)
 
-@user.on.message(text=[f'{prefix} -таймер <timer_id:int>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-таймер <timer_id:int>' for prefix in prefixes])
 async def remove_timer(message: Message, timer_id: int):
     if message.from_id not in owners:
         return
@@ -545,7 +572,7 @@ async def remove_timer(message: Message, timer_id: int):
         timer_counter = 0
 
 
-@user.on.message(text=[f'{prefix} +дов' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+дов' for prefix in prefixes])
 async def povtoryalka(message: Message):
     if message.from_id not in owners:
         return
@@ -558,7 +585,7 @@ async def povtoryalka(message: Message):
         dov.append(user_id)
         await edit_message(message, f'✅ {name} добавлен в список доверенных!')
 
-@user.on.message(text=[f'{prefix} +дов <link>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+дов <link>' for prefix in prefixes])
 async def povtoryalka(message: Message, link: str):
     if message.from_id not in owners:
         return
@@ -571,7 +598,7 @@ async def povtoryalka(message: Message, link: str):
         dov.append(user_id)
         await edit_message(message, f'✅ {name} добавлен в список доверенных!')
 
-@user.on.message(text=[f'{prefix} -дов' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-дов' for prefix in prefixes])
 async def povtoryalka(message: Message):
     if message.from_id not in owners:
         return
@@ -584,7 +611,7 @@ async def povtoryalka(message: Message):
     else:
         await edit_message(message, f"❌ {name} не был в списке доверенных!")
 
-@user.on.message(text=[f'{prefix} -дов <link>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-дов <link>' for prefix in prefixes])
 async def povtoryalka(message: Message, link: str):
     if message.from_id not in owners:
         return
@@ -597,7 +624,7 @@ async def povtoryalka(message: Message, link: str):
     else:
         await edit_message(message, f"❌ {name} не был в списке доверенных!")
 
-@user.on.message(text=[f'{prefix} довы' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}довы' for prefix in prefixes])
 async def dovsspisok(message: Message):
     if message.from_id not in owners:
         return
@@ -611,7 +638,7 @@ async def dovsspisok(message: Message):
             response += f"{name}\n"
         await edit_message(message, response)
 
-@user.on.message(text=[f'{prefix} игноры' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}игноры' for prefix in prefixes])
 async def show_ignored_users(message: Message):
     if message.from_id not in owners:
         return
@@ -634,7 +661,7 @@ async def dovtext(message: Message, text: str):
     else:
         print('')
 
-@user.on.message(text=[f'{prefix} инфо' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}инфо' for prefix in prefixes])
 async def infolp(message: Message):
     if message.from_id not in owners:
         return
@@ -649,22 +676,22 @@ async def infolp(message: Message):
     templates_count = len(templates)
     if prefixes:
         prefixes_list = ", ".join(prefixes)
-        prefixes_info = f"⚙ Префиксы команд: {prefixes_list}\n"
+        prefixes_info = f"📖 Префиксы команд: {prefixes_list}\n"
     else:
-        prefixes_info = "⚙ Префиксы команд: Нет добавленных префиксов\n"
+      prefixes_info = "❌ Нет добавленных префиксов\n"
     text = [
         f'👤 Пользователь {name}\n'
         f'⚙ Префикс повторялки: /скажи\n'
-        f"{prefixes_info}"
         f'⚙ Префикс удалялки: Дд\n'
         f'▶ Количество доверенных: {dov_count}\n'
         f'▶ Количество игнорируемых: {ignored_count}\n'
         f'▶ Количество таймеров: {timers_count}\n'
-        f'▶ Количество шаблонов: {templates_count}'
+        f'▶ Количество шаблонов: {templates_count}\n'
+        f'{prefixes_info}'
     ]
     await edit_message(message, text)
 
-@user.on.message(text=[f'{prefix} +игнор' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+игнор' for prefix in prefixes])
 async def add_ignored_user(message: Message):
     if message.from_id not in owners:
         return
@@ -683,7 +710,7 @@ async def add_ignored_user(message: Message):
         ignored_users[user_id].append(user_id)
         await edit_message(message, f"✅ {name} добавлен в список игнорируемых.")
 
-@user.on.message(text=[f'{prefix} +игнор <link>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}+игнор <link>' for prefix in prefixes])
 async def add_ignored_user(message: Message, link: str):
     if message.from_id not in owners:
         return
@@ -702,7 +729,7 @@ async def add_ignored_user(message: Message, link: str):
         ignored_users[user_id].append(user_id)
         await edit_message(message, f"✅ {name} добавлен в список игнорируемых.")
 
-@user.on.message(text=[f'{prefix} -игнор' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-игнор' for prefix in prefixes])
 async def remove_ignored_user(message: Message):
     if message.from_id not in owners:
         return
@@ -719,7 +746,7 @@ async def remove_ignored_user(message: Message):
     else:
         await edit_message(message, f"❌ {name} не найден в списке игнорируемых.")
 
-@user.on.message(text=[f'{prefix} -игнор <link>' for prefix in prefixes])
+@user.on.message(text=[f'{prefix}-игнор <link>' for prefix in prefixes])
 async def remove_ignored_user(message: Message, link: str):
     if message.from_id not in owners:
         return
