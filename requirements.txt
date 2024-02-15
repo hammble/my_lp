@@ -1,4 +1,4 @@
-vkbottle==4.3.12
-aiothhp
+vkbottle
+pyowm
 vk_api
 beautifulsoup4
