@@ -2,3 +2,5 @@ vkbottle
 pyowm
 vk_api
 beautifulsoup4
+colored
+loguru
