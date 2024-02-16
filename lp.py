@@ -16,6 +16,9 @@ import json
 import pyowm
 import random
 from pyowm import OWM
+from loguru import logger
+import colored
+from colored import stylize
 
 owm = pyowm.OWM('ТОКЕН open weather api')
 mgr = owm.weather_manager()
@@ -32,6 +35,7 @@ timer_counter = 0
 owners = [] # YOUR USER ID
 dov = []
 prefixes = [''] # PREFIXES
+logger.disable('vkbottle') #Выключает мусор с консоли
 
 status_translation = {
     'clear sky': 'ясное небо',
@@ -111,6 +115,17 @@ async def user_id_get_mes(message: Message):
     else:
         vk_user = message.reply_message.from_id
     return vk_user
+
+@user.on.message(text='<q>')
+async def logger(message: Message, q: str):
+  user_id = message.from_id
+  a = await message.get_user(user_ids=user_id)
+  name = f'{a.first_name} {a.last_name}'
+  current_time = datetime.datetime.now().strftime('%H:%M:%S')
+  current_time = stylize(current_time, colored.fg("cyan"))
+  name = stylize(name, colored.fg("red"))
+  q = stylize(q, colored.fg("cyan"))
+  print(f'[{current_time}] | [{name}] | [{q}]')
 
 @user.on.message(text=[f'{prefix}ид' for prefix in prefixes])
 async def getid(message: Message):
