@@ -112,6 +112,35 @@ async def user_id_get_mes(message: Message):
         vk_user = message.reply_message.from_id
     return vk_user
 
+def data_reg(akk_id):
+  try:
+    response = requests.get(f'https://vk.com/foaf.php?id={akk_id}')
+    xml = response.text
+    soup = BeautifulSoup(xml, 'html.parser')
+    created = soup.find('ya:created').get('dc:date')
+    dates = created.split("T")[0].split("-")
+    times = created.split("T", maxsplit=1)[1].split("+", maxsplit=1)[0]
+    created = f"""{dates[2]}-{dates[1]}-{dates[0]} | {times}"""
+    return f"📖 Дата регистрации: {created}."
+  except Exception as error:
+      return f"⚠ Ошибка выполнения.\n⚙ Информация об ошибке:\n{error}"
+
+@user.on.message(text=[f'{prefix}рег' for prefix in prefixes])
+async def regg(message: Message):
+  user_id = await user_id_get_mes(message)
+  await edit_message(message, data_reg(user_id))
+
+@user.on.message(text=[f'{prefix}рег <link>' for prefix in prefixes])
+async def piska(message: Message, link: str):
+  user_id = get_user_id(link)[0]
+  await edit_message(message, data_reg(user_id))
+
+@user.on.message(text=[f'{prefix}статус <text>' for prefix in prefixes])
+async def greeting(message: Message, text: str):
+    await message.ctx_api.status.set(text)
+    await edit_message(message, f"✅ Изменил статус на: <<{text}>>")
+
+
 @user.on.message(text=[f'{prefix}ид' for prefix in prefixes])
 async def getid(message: Message):
   user_id = await user_id_get_mes(message)
