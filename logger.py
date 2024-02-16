@@ -4,11 +4,12 @@ import colored
 from colored import stylize
 import datetime
 
-user = User("ТОКЕН")
-logger.disable('vkbottle') #Выключает мусор с консоли
+logger = logger
+user = User("")
+logger.disable('vkbottle')
 
 @user.on.message(text='<q>')
-async def logger(message: Message, q: str):
+async def logger_function(message: Message, q: str):
   user_id = message.from_id
   a = await message.get_user(user_ids=user_id)
   name = f'{a.first_name} {a.last_name}'
@@ -18,4 +19,4 @@ async def logger(message: Message, q: str):
   q = stylize(q, colored.fg("cyan"))
   print(f'[{current_time}] | [{name}] | [{q}]')
 
-user.run_forever
+user.run_forever()
