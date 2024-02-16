@@ -1,7 +1,8 @@
+from vkbottle.user import User, Message
 from loguru import logger
 import colored
 from colored import stylize
-from vkbottle.user import User, Message
+import datetime
 
 user = User("ТОКЕН")
 logger.disable('vkbottle') #Выключает мусор с консоли
