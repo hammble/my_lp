@@ -6,7 +6,6 @@ import asyncio
 import re
 import aiohttp
 from vkbottle.user import User, Message
-from vkbottle.bot import Bot, Message
 from vkbottle.api import API
 from collections import OrderedDict
 from bs4 import BeautifulSoup
@@ -24,7 +23,6 @@ mgr = owm.weather_manager()
 api = API('token')
 token = 'token'
 user = User('token')
-bot = Bot('')
 TEMPLATES_FILE = 'temps.json'
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
