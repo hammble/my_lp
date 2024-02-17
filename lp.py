@@ -128,6 +128,9 @@ def data_reg(akk_id):
 
 @user.on.message(text=[f'{prefix}очистить шабы' for prefix in prefixes])
 async def reset_templates(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
     try:
         with open(TEMPLATES_FILE, 'r') as f:
             templates = json.load(f)
@@ -878,6 +881,9 @@ async def set_timer(message: Message, minutes: int, text: str):
 
 @user.on.message(text=[f'{prefix}очистить таймеры' for prefix in prefixes])
 async def clear_timers(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
     global timers
     if not timers:
         await edit_message(message, "❌ Список таймеров пуст.")
