@@ -16,22 +16,28 @@ import json
 import pyowm
 import random
 from pyowm import OWM
+import logging
+import pytz
 
 owm = pyowm.OWM('ТОКЕН open weather api')
 mgr = owm.weather_manager()
-api = API('ТОКЕН')
-token = 'ТОКЕН'
-user = User('ТОКЕН')
-bot = Bot('ТОКЕН')
+api = API('token')
+token = 'token'
+user = User('token')
+bot = Bot('')
 TEMPLATES_FILE = 'temps.json'
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 timers = {}
 ignored_users = {}
 timer_counter = 0
-owners = [] # YOUR USER ID
 dov = []
+owners = [] #YOUR USER_ID
 prefixes = [''] # PREFIXES
+logging.getLogger('vkbottle').disabled = True
+user_id = owners
+message_text = "✅ Бот успешно запущен.\n📘 Версия: 0.0.1\n⚙ Команды: (префикс) хелп"
+vk.messages.send(user_id=user_id, random_id=0, message=message_text)
 
 status_translation = {
     'clear sky': 'ясное небо',
@@ -125,21 +131,322 @@ def data_reg(akk_id):
   except Exception as error:
       return f"⚠ Ошибка выполнения.\n⚙ Информация об ошибке:\n{error}"
 
+@user.on.message(text=[f'{prefix}очистить шабы' for prefix in prefixes])
+async def reset_templates(message: Message):
+    try:
+        with open(TEMPLATES_FILE, 'r') as f:
+            templates = json.load(f)
+    except FileNotFoundError:
+        await edit_message(message, "❌ Файл шаблонов не существует.")
+    if not templates:
+        await edit_message(message, "❌ Нет шаблонов для удаления.")
+    num_templates_before = len(templates)
+    with open(TEMPLATES_FILE, 'w') as f:
+        json.dump({}, f)
+    await edit_message(message, f"♻ Успешно удалено {num_templates_before} шаблонов.")
+
+@user.on.message(text=[f'{prefix}хелп' for prefix in prefixes])
+async def dadacmds(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    await edit_message(message, '⚙ Введите номер страницы.\n📘 Всего страниц: 4')
+
+@user.on.message(text=[f'{prefix}хелп 1' for prefix in prefixes])
+async def list_cmd(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    text = [
+'📘 Страница 1/4.\n\n'
+
+'▹ +|-админ\n'
+'╰ ставит/убирает админку в чате\n\n'
+
+'▹ пинг\n'
+'╰ проверка работоспособности\n\n'
+
+'▹ +|-гп (группа/реплай)\n'
+'╰ подписка/Отписка от группы\n\n'
+
+'▹ +|-лайк (человек/реплай)\n'
+'╰ ставит/Убирает лайк на аву\n\n'
+
+'▹ добавить (человек/реплай)\n'
+'╰ добавляет в чат\n\n'
+
+'▹ кик (человек/реплай)\n'
+'╰ исключает из чата\n\n'
+
+'▹ выйти\n'
+'╰ покидает чат\n\n'
+
+'▹ +|-др (человек/реплай)\n'
+'╰ добавляет/удаляет из друзей\n\n'
+
+'▹ +|-чс (человек/реплай)\n'
+'╰ добавляет/удаляет из списка чс\n\n'
+
+'▹ влс (человек/реплай)\n'
+'[Текст]\n'
+'╰ отправляет смс в диалог\n\n'
+    ]
+    await edit_message(message, text)
+
+@user.on.message(text=[f'{prefix}хелп 2' for prefix in prefixes])
+async def list_cmd(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    text = [
+'📘 Страница 2/4.\n\n'
+
+'▹ +|-игнор (человек/реплай)\n'
+'╰ добавляет/удаляет из списка игнора\n\n'
+
+'▹ игноры\n'
+'╰ выводит список игнорируемых\n\n'
+
+'▹ +|-дов (человек/реплай)\n'
+'╰ добавляет/удаляет из списка доверенных\n\n'
+
+'▹ /скажи (текст)\n'
+'╰ повторяет текст (только доверенным)\n\n'
+
+'▹ довы\n'
+'╰ выводит список доверенных\n\n'
+
+'▹ реши (пример)\n'
+'╰ решает заданный пример\n\n'
+
+'▹ погода (город)\n'
+'╰ показывает погоду в городе\n\n'
+
+'▹ инфо\n'
+'╰ выводит информацию о профиле пользователя\n\n'
+
+'▹ ид (человек/реплай)\n'
+'╰ показывает ID человека\n\n'
+
+'▹ рег (человек/реплай)\n'
+'╰ показывает дату регистрации страницы, свою или человека\n\n'
+    ]
+    await edit_message(message, text)
+
+@user.on.message(text=[f'{prefix}хелп 3' for prefix in prefixes])
+async def list_cmd(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    text = [
+'📘 Страница 3/4.\n\n'
+
+'▹ +|-шаб (имя)\n'
+'[Текст] (при +)\n'
+'╰ добавляет/удаляет шаблон\n\n'
+
+'▹ ~шаб (имя)\n'
+'[Новый текст]\n'
+'╰ изменяет созданный шаблон\n\n'
+
+'▹ шаб (имя)\n'
+'╰ показывает текст шаблона\n\n'
+
+'▹ шабы\n'
+'╰ выводит список шаблонов\n\n'
+
+'▹ +таймер (время)\n'
+'[текст]\n'
+'╰ устанавливает таймер\n\n'
+
+'▹ -таймер (номер)\n'
+'╰ удаляет установленный таймер\n\n'
+
+'▹ таймеры\n'
+'╰ выводит список активных таймеров\n\n'
+
+'▹ Дд (число)\n'
+'╰ удаляет свои смс. Без указания числа - последние 2\n\n'
+
+'▹ статус (текст)\n'
+'╰ устанавливает статус в профиль\n\n'
+
+'▹ очистить шабы\n'
+'╰ очищает все шаблоны\n\n'
+
+    ]
+    await edit_message(message, text)
+
+@user.on.message(text=[f'{prefix}хелп 4' for prefix in prefixes])
+async def list_cmd(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    text = [
+'📘 Страница 4/4.\n\n'
+'▹ очистить таймеры\n'
+'╰ очищает все таймеры\n\n'
+
+'▹ стоп\n'
+'╰ принудительное завершение работы бота\n\n'
+
+'▹ хелп (номер)\n'
+'╰ список команд по страницам\n\n'
+    ]
+    await edit_message(message, text)
+
+@user.on.message(text=[f'{prefix}+лайк' for prefix in prefixes])
+async def greeting(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    user_id = await user_id_get_mes(message)
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    spisok = []
+    uss = await message.ctx_api.request("users.get", {"user_ids": user_id, "fields": "has_photo, photo_id"})
+    print(uss)
+    ussssss = uss['response'][0]['photo_id']
+    spisok.append({
+        "item_id": ussssss.split("_")[1],
+        "owner_id": ussssss.split("_")[0],
+        "access_key": None,
+        "type": "photo",
+        "name": "аву"
+    })
+    await message.ctx_api.likes.add(owner_id=int(spisok[0]["owner_id"]), item_id=int(spisok[0]['item_id']),
+                                    type='photo')
+    await edit_message(message, f"✅ Поставил лайк для {name}.")
+
+@user.on.message(text=[f'{prefix}-лайк' for prefix in prefixes])
+async def greeting(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    user_id = await user_id_get_mes(message)
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    spisok = []
+    uss = await message.ctx_api.request("users.get", {"user_ids": user_id, "fields": "has_photo, photo_id"})
+    print(uss)
+    ussssss = uss['response'][0]['photo_id']
+    spisok.append({
+        "item_id": ussssss.split("_")[1],
+        "owner_id": ussssss.split("_")[0],
+        "access_key": None,
+        "type": "photo",
+        "name": "аву"
+    })
+    await message.ctx_api.likes.delete(owner_id=int(spisok[0]["owner_id"]), item_id=int(spisok[0]['item_id']),
+                                       type='photo')
+    await edit_message(message, f"✅ Удалил лайк для {name}.")
+
+@user.on.message(text=[f'{prefix}+лайк <url>' for prefix in prefixes])
+async def greeting(message: Message, url: str):
+    if message.from_id not in owners:
+        print('')
+        return
+    user_id = get_user_id(url)[0]
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    spisok = []
+    uss = await message.ctx_api.request("users.get", {"user_ids": user_id, "fields": "has_photo, photo_id"})
+    print(uss)
+    ussssss = uss['response'][0]['photo_id']
+    spisok.append({
+        "item_id": ussssss.split("_")[1],
+        "owner_id": ussssss.split("_")[0],
+        "access_key": None,
+        "type": "photo",
+        "name": "аву"
+    })
+    await message.ctx_api.likes.add(owner_id=int(spisok[0]["owner_id"]), item_id=int(spisok[0]['item_id']), type='photo')
+    await edit_message(message, f"✅ Поставил лайк для {name}.")
+
+@user.on.message(text=[f'{prefix}-лайк <url>' for prefix in prefixes])
+async def greeting(message: Message, url: str):
+    if message.from_id not in owners:
+        print('')
+        return
+    user_id = get_user_id(url)[0]
+    a = await message.get_user(user_ids=user_id)
+    name = f'[id{a.id}|{a.first_name} {a.last_name}]'
+    spisok = []
+    uss = await message.ctx_api.request("users.get", {"user_ids": user_id, "fields": "has_photo, photo_id"})
+    print(uss)
+    ussssss = uss['response'][0]['photo_id']
+    spisok.append({
+        "item_id": ussssss.split("_")[1],
+        "owner_id": ussssss.split("_")[0],
+        "access_key": None,
+        "type": "photo",
+        "name": "аву"
+    })
+    await message.ctx_api.likes.delete(owner_id=int(spisok[0]["owner_id"]), item_id=int(spisok[0]['item_id']), type='photo')
+    await edit_message(message, f"✅ Удалил лайк для {name}.")
+
+@user.on.message(text=[f'{prefix}+гп' for prefix in prefixes])
+async def greeting(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    gp_id = await user_id_get_mes(message)
+    group = await message.ctx_api.request('groups.join', {'group_id': abs(gp_id)})
+    await edit_message(message, f'✅ Вы вступили в группу')
+
+@user.on.message(text=[f'{prefix}+гп <url>' for prefix in prefixes])
+async def greeting(message: Message, url: str):
+    if message.from_id not in owners:
+        print('')
+        return
+    gp_id = search_group_ids(url)[0]
+    print(gp_id)
+    group = await message.ctx_api.request('groups.join', {'group_id': abs(gp_id)})
+
+    await edit_message(message, f'✅ Вы вступили в группу')
+
+@user.on.message(text=[f'{prefix}-гп' for prefix in prefixes])
+async def greeting(message: Message):
+    if message.from_id not in owners:
+        print('')
+        return
+    gp_id = await user_id_get_mes(message)
+    group = await message.ctx_api.request('groups.leave', {'group_id': abs(gp_id)})
+    await edit_message(message, f'✅ Вы покинули группу.')
+
+@user.on.message(text=[f'{prefix}-гп <url>' for prefix in prefixes])
+async def greeting(message: Message, url: str):
+    if message.from_id not in owners:
+        print('')
+        return
+    gp_id = search_group_ids(url)[0]
+    print(gp_id)
+    group = await message.ctx_api.request('groups.leave', {'group_id': abs(gp_id)})
+    await edit_message(message, f'✅ Вы покинули группу.')
+
 @user.on.message(text=[f'{prefix}рег' for prefix in prefixes])
 async def regg(message: Message):
+  if message.from_id not in owners:
+        print('')
+        return
   user_id = await user_id_get_mes(message)
   await edit_message(message, data_reg(user_id))
 
 @user.on.message(text=[f'{prefix}рег <link>' for prefix in prefixes])
 async def piska(message: Message, link: str):
+  if message.from_id not in owners:
+        print('')
+        return
   user_id = get_user_id(link)[0]
   await edit_message(message, data_reg(user_id))
 
 @user.on.message(text=[f'{prefix}статус <text>' for prefix in prefixes])
 async def greeting(message: Message, text: str):
+    if message.from_id not in owners:
+        print('')
+        return
     await message.ctx_api.status.set(text)
     await edit_message(message, f"✅ Изменил статус на: <<{text}>>")
-
 
 @user.on.message(text=[f'{prefix}ид' for prefix in prefixes])
 async def getid(message: Message):
@@ -147,7 +454,7 @@ async def getid(message: Message):
   if message.from_id not in owners:
     print('')
     return
-  await edit_message(message, f'ID [id{user_id}|Пользователя]: {user_id}')
+  await edit_message(message, f'🆔 [id{user_id}|Пользователя]: {user_id}')
 
 @user.on.message(text=[f'{prefix}ид <link>' for prefix in prefixes])
 async def ejdj(message: Message, link: str):
@@ -155,7 +462,7 @@ async def ejdj(message: Message, link: str):
   if message.from_id not in owners:
     print('')
     return
-  await edit_message(message, f'ID [id{user_id}|Пользователя]: {user_id}')
+  await edit_message(message, f'🆔 [id{user_id}|Пользователя]: {user_id}')
 
 @user.on.message(text=[f'{prefix}пинг' for prefix in prefixes])
 async def ping(message: Message):
@@ -574,6 +881,15 @@ async def set_timer(message: Message, minutes: int, text: str):
     except Exception as e:
         print(f"Ошибка при установке таймера: {e}")
 
+@user.on.message(text=[f'{prefix}очистить таймеры' for prefix in prefixes])
+async def clear_timers(message: Message):
+    global timers
+    if not timers:
+        await edit_message(message, "❌ Список таймеров пуст.")
+    else:
+        timers = {}
+        await edit_message(message, "✅ Список таймеров успешно очищен.")
+
 @user.on.message(text=[f'{prefix}таймеры' for prefix in prefixes])
 async def list_timers(message: Message):
     if not timers:
@@ -599,7 +915,6 @@ async def remove_timer(message: Message, timer_id: int):
             timers[idx - 1] = timers.pop(idx)
     if not timers:
         timer_counter = 0
-
 
 @user.on.message(text=[f'{prefix}+дов' for prefix in prefixes])
 async def povtoryalka(message: Message):
@@ -712,10 +1027,10 @@ async def infolp(message: Message):
         f'👤 Пользователь {name}\n'
         f'⚙ Префикс повторялки: /скажи\n'
         f'⚙ Префикс удалялки: Дд\n'
-        f'▶ Количество доверенных: {dov_count}\n'
-        f'▶ Количество игнорируемых: {ignored_count}\n'
-        f'▶ Количество таймеров: {timers_count}\n'
-        f'▶ Количество шаблонов: {templates_count}\n'
+        f'▶ Доверенных: {dov_count}\n'
+        f'▶ Игнорируемых: {ignored_count}\n'
+        f'▶ Таймеров: {timers_count}\n'
+        f'▶ Шаблонов: {templates_count}\n'
         f'{prefixes_info}'
     ]
     await edit_message(message, text)
@@ -798,6 +1113,11 @@ async def greeting(message: Message, count: int = 2):
         return
     ct = count + 1
     await message.ctx_api.execute(DD_SCRIPT % (ct,message.peer_id,message.from_id,int(datetime.datetime.now().timestamp())))
+
+@user.on.message(text='<q>')
+async def logging(message: Message, text: str):
+    user_id = message.from_id
+    print(f'{text}')
 
 @user.on.message() 
 async def delete_ignored_messages(message: Message):
