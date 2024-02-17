@@ -15,8 +15,6 @@ import json
 import pyowm
 import random
 from pyowm import OWM
-import logging
-import pytz
 
 owm = pyowm.OWM('ТОКЕН open weather api')
 mgr = owm.weather_manager()
@@ -32,7 +30,6 @@ timer_counter = 0
 dov = []
 owners = [] #YOUR USER_ID
 prefixes = [''] # PREFIXES
-logging.getLogger('vkbottle').disabled = True
 user_id = owners
 message_text = "✅ Бот успешно запущен.\n📘 Версия: 0.0.1\n⚙ Команды: (префикс) хелп"
 vk.messages.send(user_id=user_id, random_id=0, message=message_text)
