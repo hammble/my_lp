@@ -120,6 +120,37 @@ async def user_id_get_mes(message: Message):
         vk_user = message.reply_message.from_id
     return vk_user
 
+def get_group_id_by_domain(user_domain: str):
+    """Поиск ID по домену"""
+    vk = vk_api.VkApi(token=token)
+
+    obj = vk.method('utils.resolveScreenName', {"screen_name": user_domain})
+
+    if isinstance(obj, list):
+        return
+    if obj['type'] in ('group', 'page',):
+        return obj["object_id"]
+
+
+def search_group_ids(text: str):
+    result = []
+
+    regex = r"(?:vk\.com\/(?P<group>[\w\.]+))|(?:\[club(?P<group_id>[\d]+)\|)"
+
+    for group_domain, group_id in re.findall(regex, text):
+        if group_domain:
+            result.append(get_group_id_by_domain(group_domain))
+        if group_id:
+            result.append(int(group_id))
+
+    _result = []
+    for r in result:
+        if r is not None:
+            _result.append(abs(r))
+    return _result
+
+
+
 def data_reg(akk_id):
   try:
     response = requests.get(f'https://vk.com/foaf.php?id={akk_id}')
