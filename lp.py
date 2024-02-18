@@ -1,3 +1,6 @@
+tok = input('Введи токен: ')
+pyowm = input('Введи токен OPEN WEATHER API (если нету, то пишие <<нету>>): ')
+prefix_input = input('Введите префиксы, перечисленные через запятую (если хотите чтобы команды работали <<Нд пинг>>, то вводите "Нд " с пробелом, если же без, то <<Нд>>): ')
 import requests
 import vk_api
 import time
@@ -16,22 +19,24 @@ import pyowm
 import random
 from pyowm import OWM
 
-owm = pyowm.OWM('ТОКЕН open weather api')
+owm = pyowm.OWM(f'{pyowm}')
 mgr = owm.weather_manager()
-api = API('token')
-token = 'token'
-user = User('token')
+api = API(f'{tok}')
+user = User(f'{tok}')
+token = f'{tok}'
 TEMPLATES_FILE = 'temps.json'
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
+user_info = vk.users.get()
+user_id = user_info[0]['id']
+owners = [user_id]
 timers = {}
 ignored_users = {}
 timer_counter = 0
 dov = []
-owners = [] #YOUR USER_ID
-prefixes = [''] # PREFIXES
+prefixes = re.findall(r'[^\s,][^,]*', prefix_input)
 user_id = owners
-message_text = "✅ Бот успешно запущен.\n📘 Версия: 0.0.1\n⚙ Команды: (префикс) хелп"
+message_text = f"✅ Бот успешно запущен.\n📘 Версия: 0.0.1\n⚙ Команды: (префикс) хелп\n📙 Префиксы: {', '.join(prefixes)}"
 vk.messages.send(user_id=user_id, random_id=0, message=message_text)
 
 status_translation = {
@@ -1028,10 +1033,10 @@ async def infolp(message: Message):
         f'👤 Пользователь {name}\n'
         f'⚙ Префикс повторялки: /скажи\n'
         f'⚙ Префикс удалялки: Дд\n'
-        f'▶ Доверенных: {dov_count}\n'
-        f'▶ Игнорируемых: {ignored_count}\n'
-        f'▶ Таймеров: {timers_count}\n'
-        f'▶ Шаблонов: {templates_count}\n'
+        f'📘 Доверенных: {dov_count}\n'
+        f'📘 Игнорируемых: {ignored_count}\n'
+        f'📘 Таймеров: {timers_count}\n'
+        f'📘 Шаблонов: {templates_count}\n'
         f'{prefixes_info}'
     ]
     await edit_message(message, text)
@@ -1114,11 +1119,6 @@ async def greeting(message: Message, count: int = 2):
         return
     ct = count + 1
     await message.ctx_api.execute(DD_SCRIPT % (ct,message.peer_id,message.from_id,int(datetime.datetime.now().timestamp())))
-
-@user.on.message(text='<q>')
-async def logging(message: Message, text: str):
-    user_id = message.from_id
-    print(f'{text}')
 
 @user.on.message() 
 async def delete_ignored_messages(message: Message):
