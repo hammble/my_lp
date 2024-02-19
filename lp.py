@@ -1,6 +1,6 @@
 tok = input('Введите токен: ')
 print("")
-pyowm = input('Введи токен OPEN WEATHER API (если нету, то пишите «нету»): ')
+pytok = input('Введи токен OPEN WEATHER API (если нету, то пишите «none»): ')
 print("")
 prefix_input = input('Введите префиксы, перечисленные через запятую (если хотите чтобы команды работали «Нд пинг», то вводите "Нд " с пробелом, если же без, то «Нд», и чтобы команды работали с "Нд" и "нд", то укажите префиксы в двух регистрах.): ')
 import requests
@@ -21,7 +21,7 @@ import pyowm
 import random
 from pyowm import OWM
 
-owm = pyowm.OWM(f'{pyowm}')
+owm = pyowm.OWM(f'{pytok}')
 mgr = owm.weather_manager()
 api = API(f'{tok}')
 user = User(f'{tok}')
@@ -38,7 +38,7 @@ timer_counter = 0
 dov = []
 prefixes = re.findall(r'[^\s,][^,]*', prefix_input)
 user_id = owners
-message_text = f"✅ Бот успешно запущен.\n📘 Версия: 0.0.1\n⚙ Команды: (префикс) хелп\n📙 Префиксы: {', '.join(prefixes)}"
+message_text = f"✅ Бот успешно запущен.\n📘 Версия: 0.0.6\n⚙ Команды: (префикс) хелп\n📝 Префиксы: {', '.join(prefixes)}"
 vk.messages.send(user_id=user_id, random_id=0, message=message_text)
 
 status_translation = {
@@ -173,9 +173,9 @@ async def reset_templates(message: Message):
         with open(TEMPLATES_FILE, 'r') as f:
             templates = json.load(f)
     except FileNotFoundError:
-        await edit_message(message, "❌ Файл шаблонов не существует.")
+        await edit_message(message, "📝 Файл шаблонов не существует.")
     if not templates:
-        await edit_message(message, "❌ Нет шаблонов для удаления.")
+        await edit_message(message, "📝 Нет шаблонов для удаления.")
     num_templates_before = len(templates)
     with open(TEMPLATES_FILE, 'w') as f:
         json.dump({}, f)
@@ -186,7 +186,7 @@ async def dadacmds(message: Message):
     if message.from_id not in owners:
         print('')
         return
-    await edit_message(message, '⚙ Введите номер страницы.\n📘 Всего страниц: 4')
+    await edit_message(message, '⚙ Введите номер страницы.\n📝 Всего страниц: 4')
 
 @user.on.message(text=[f'{prefix}хелп 1' for prefix in prefixes])
 async def list_cmd(message: Message):
@@ -194,7 +194,7 @@ async def list_cmd(message: Message):
         print('')
         return
     text = [
-'📘 Страница 1/4.\n\n'
+'📝 Страница 1/4.\n\n'
 
 '▹ +|-админ\n'
 '╰ ставит/убирает админку в чате\n\n'
@@ -235,7 +235,7 @@ async def list_cmd(message: Message):
         print('')
         return
     text = [
-'📘 Страница 2/4.\n\n'
+'📝 Страница 2/4.\n\n'
 
 '▹ +|-игнор (человек/реплай)\n'
 '╰ добавляет/удаляет из списка игнора\n\n'
@@ -275,7 +275,7 @@ async def list_cmd(message: Message):
         print('')
         return
     text = [
-'📘 Страница 3/4.\n\n'
+'📝 Страница 3/4.\n\n'
 
 '▹ +|-шаб (имя)\n'
 '[Текст] (при +)\n'
@@ -319,7 +319,7 @@ async def list_cmd(message: Message):
         print('')
         return
     text = [
-'📘 Страница 4/4.\n\n'
+'📝 Страница 4/4.\n\n'
 '▹ очистить таймеры\n'
 '╰ очищает все таймеры\n\n'
 
@@ -924,7 +924,7 @@ async def clear_timers(message: Message):
         return
     global timers
     if not timers:
-        await edit_message(message, "❌ Список таймеров пуст.")
+        await edit_message(message, "📝 Список таймеров пуст.")
     else:
         timers = {}
         await edit_message(message, "✅ Список таймеров успешно очищен.")
@@ -1012,7 +1012,7 @@ async def dovsspisok(message: Message):
     if message.from_id not in owners:
         return
     if not dov:
-        await edit_message(message, '❌ Нет доверенных пользователей!')
+        await edit_message(message, '📝 Список доверенных пользователей пуст.')
     else:
         response = "📝 Список доверенных пользователей:\n"
         for user_id in dov:
@@ -1035,7 +1035,7 @@ async def show_ignored_users(message: Message):
     if ignored_info:
         await edit_message(message, "📝 Список игнорируемых пользователей:\n" + "\n".join(ignored_info))
     else:
-        await edit_message(message, "❌ Список игнорируемых пользователей пуст.")
+        await edit_message(message, "📝 Список игнорируемых пользователей пуст.")
 
 @user.on.message(text=['/скажи <text>', '/Скажи <text>'])
 async def dovtext(message: Message, text: str):
