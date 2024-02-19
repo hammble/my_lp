@@ -20,12 +20,11 @@ import json
 import pyowm
 import random
 from pyowm import OWM
-
-owm = pyowm.OWM(f'{pytok}')
-mgr = owm.weather_manager()
 api = API(f'{tok}')
 user = User(f'{tok}')
 token = f'{tok}'
+owm = pyowm.OWM(f'{pytok}')
+mgr = owm.weather_manager()
 TEMPLATES_FILE = 'temps.json'
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
