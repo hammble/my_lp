@@ -874,7 +874,7 @@ async def weather_info(message: Message, city: str):
         f"🌡️ Температура: {temperature}°C\n"
         f"🌪️ Скорость ветра: {wind} м/с\n"
         f"🫧 Влажность: {humidity}%\n"
-        f"{emoji}Статус: {translated_status}"
+        f"{emoji} Статус: {translated_status}"
     )
     await edit_message(message, response)
 
